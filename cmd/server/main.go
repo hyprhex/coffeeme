@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/hyprhex/coffeeme/db"
 	"github.com/joho/godotenv"
 )
 
@@ -44,7 +45,13 @@ func main() {
 		Port: os.Getenv("PORT"),
 	}
 
-	// TODO: Add db connection
+	dsn := os.Getenv("DSN")
+	dbConn, err := db.ConnectPostgres(dsn)
+	if err != nil {
+		log.Fatal("Cannot connect to the database")
+	}
+
+	defer dbConn.DB.Close()
 
 	app := &Application{
 		Config: cfg,
